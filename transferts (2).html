@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Top 10 qui n'a jamais cessé de grimper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a120f;
+    --bg-2: #0f1a15;
+    --surface: #142219;
+    --surface-2: #182a1e;
+    --hair: rgba(243,241,231,0.09);
+    --hair-strong: rgba(243,241,231,0.16);
+    --ink: #f3f1e7;
+    --ink-dim: #a9b7ad;
+    --ink-faint: #6d7d72;
+    --gold: #d9a441;
+    --gold-soft: rgba(217,164,65,0.16);
+    --attack: #e2664a;
+    --mid: #d9a441;
+    --def: #4f8fd1;
+    --gk: #a678d1;
+    --radius: 14px;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg: #0a120f; --bg-2:#0f1a15; --surface:#142219; --surface-2:#182a1e;
+      --ink:#f3f1e7; --ink-dim:#a9b7ad; --ink-faint:#6d7d72;
+    }
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0;
+    min-height:100%;
+    background:
+      radial-gradient(1200px 500px at 50% -10%, rgba(217,164,65,0.10), transparent 60%),
+      linear-gradient(180deg, var(--bg-2), var(--bg) 40%);
+    color:var(--ink);
+    font-family:'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:460px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+    position:relative;
+  }
+
+  /* pitch-line texture along the edges, subtle */
+  .wrap::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image: repeating-linear-gradient(180deg, transparent 0 118px, rgba(243,241,231,0.025) 118px 119px);
+    z-index:0;
+  }
+
+  header{position:relative; z-index:1; margin-bottom:22px;}
+  .eyebrow{
+    font-size:12.5px;
+    color:var(--gold);
+    letter-spacing:0.02em;
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:clamp(28px, 8vw, 34px);
+    line-height:1.05;
+    letter-spacing:0.01em;
+    margin:0 0 12px;
+    text-wrap:balance;
+  }
+  h1 em{
+    font-style:normal;
+    color:var(--gold);
+  }
+  .lede{
+    color:var(--ink-dim);
+    font-size:14.5px;
+    line-height:1.55;
+    margin:0;
+    max-width:40ch;
+  }
+
+  /* ---- year rail ---- */
+  .rail{
+    position:sticky;
+    top:env(safe-area-inset-top, 0px);
+    z-index:5;
+    margin:22px -18px 22px;
+    padding:12px 18px;
+    background:linear-gradient(180deg, rgba(10,18,15,0.96), rgba(10,18,15,0.86) 70%, rgba(10,18,15,0));
+    backdrop-filter: blur(6px);
+  }
+  .rail-row{
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .rail-arrow{
+    flex:0 0 auto;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    border:1px solid var(--hair);
+    background:transparent;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:13px;
+    line-height:1;
+    transition:color .2s ease, border-color .2s ease, opacity .2s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .rail-arrow:hover{color:var(--ink); border-color:var(--hair-strong);}
+  .rail-arrow:active{transform:scale(0.92);}
+  .rail-track{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    padding-bottom:2px;
+    scroll-behavior:smooth;
+  }
+  .rail-track::-webkit-scrollbar{display:none;}
+  .year-btn{
+    flex:0 0 auto;
+    font-family:'Oswald', sans-serif;
+    font-weight:500;
+    font-size:15px;
+    color:var(--ink-faint);
+    background:transparent;
+    border:1px solid var(--hair);
+    border-radius:999px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:color .25s ease, border-color .25s ease, background .25s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .year-btn:hover{color:var(--ink);}
+  .year-btn.active{
+    color:#141b10;
+    background:var(--gold);
+    border-color:var(--gold);
+  }
+
+  /* ---- context line for current snapshot ---- */
+  .ctx{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin:2px 2px 16px;
+    position:relative;
+    z-index:1;
+  }
+  .ctx-year{
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
+    color:var(--ink-dim);
+  }
+  .ctx-year b{color:var(--ink); font-weight:600;}
+  .ctx-max{
+    font-size:12px;
+    color:var(--ink-faint);
+  }
+
+  /* ---- legend ---- */
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin:0 2px 22px;
+    position:relative;
+    z-index:1;
+  }
+  .legend span{
+    font-size:12px;
+    color:var(--ink-faint);
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .dot.attack{background:var(--attack);}
+  .dot.mid{background:var(--mid);}
+  .dot.def{background:var(--def);}
+  .dot.gk{background:var(--gk);}
+
+  /* ---- list ---- */
+  #list{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .row{
+    background:linear-gradient(180deg, var(--surface-2), var(--surface));
+    border:1px solid var(--hair);
+    border-radius:var(--radius);
+    padding:14px 16px 15px;
+    opacity:0;
+    transform:translateY(6px);
+    animation: rise .45s ease forwards;
+  }
+  .row-top{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .rank{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:20px;
+    color:var(--ink-faint);
+    width:24px;
+    flex:0 0 24px;
+    line-height:1.3;
+  }
+  .row.n1 .rank, .row.n2 .rank, .row.n3 .rank{color:var(--gold);}
+  .row-main{flex:1; min-width:0;}
+  .name-line{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .name{
+    font-family:'Oswald', sans-serif;
+    font-weight:500;
+    font-size:18px;
+    letter-spacing:0.01em;
+  }
+  .yeartag{
+    font-size:11px;
+    color:var(--ink-faint);
+    border:1px solid var(--hair-strong);
+    border-radius:5px;
+    padding:1px 6px;
+  }
+  .yeartag.new{
+    color:#141b10;
+    background:var(--gold);
+    border-color:var(--gold);
+    font-weight:600;
+  }
+  .clubs{
+    margin-top:4px;
+    font-size:13px;
+    color:var(--ink-dim);
+    display:flex;
+    align-items:center;
+    gap:5px;
+    flex-wrap:wrap;
+  }
+  .clubs .arrow{color:var(--ink-faint); font-size:12px;}
+  .clubs .to{color:var(--ink); font-weight:500;}
+  .club{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    min-width:0;
+  }
+  .badge{
+    flex:0 0 auto;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:8px;
+    letter-spacing:0.02em;
+    line-height:1;
+    box-shadow:0 0 0 1.5px rgba(243,241,231,0.22);
+    overflow:hidden;
+  }
+  .badge img{width:100%; height:100%; object-fit:contain; display:block;}
+  .badge.logo{background:transparent; box-shadow:none; border-radius:0; width:24px; height:24px;}
+  .fee{
+    text-align:right;
+    flex:0 0 auto;
+    padding-left:8px;
+  }
+  .fee b{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:20px;
+    color:var(--gold);
+    white-space:nowrap;
+  }
+  .fee span{
+    display:block;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    margin-top:1px;
+  }
+  .bar-track{
+    margin-top:10px;
+    height:6px;
+    border-radius:4px;
+    background:rgba(243,241,231,0.06);
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    width:0%;
+    border-radius:4px;
+    transition:width .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .bar-fill.attack{background:linear-gradient(90deg, #b8492f, var(--attack));}
+  .bar-fill.mid{background:linear-gradient(90deg, #a97a2c, var(--gold));}
+  .bar-fill.def{background:linear-gradient(90deg, #33628f, var(--def));}
+  .bar-fill.gk{background:linear-gradient(90deg, #7952a0, var(--gk));}
+
+  @keyframes rise{
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  footer{
+    margin-top:30px;
+    padding-top:16px;
+    border-top:1px solid var(--hair);
+    font-size:11.5px;
+    color:var(--ink-faint);
+    line-height:1.6;
+    position:relative;
+    z-index:1;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .row{animation:none; opacity:1; transform:none;}
+    .bar-fill{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Marché des transferts · depuis 1995</p>
+    <h1>Le classement qui n'a <em>jamais</em> cessé de grimper</h1>
+    <p class="lede">Le top 10 des transferts les plus chers de l'histoire, figé année après année — avec le club quitté et le club rejoint pour chaque joueur.</p>
+  </header>
+
+  <div class="rail">
+    <div class="rail-row">
+      <button class="rail-arrow" id="railPrev" aria-label="Années précédentes">&#8249;</button>
+      <div class="rail-track" id="railTrack"></div>
+      <button class="rail-arrow" id="railNext" aria-label="Années suivantes">&#8250;</button>
+    </div>
+  </div>
+
+  <div class="ctx">
+    <div class="ctx-year">Classement en <b id="ctxYear">1996</b></div>
+    <div class="ctx-max">échelle commune · 0–222 M€</div>
+  </div>
+
+  <div class="legend">
+    <span><i class="dot attack"></i>Attaquant</span>
+    <span><i class="dot mid"></i>Milieu</span>
+    <span><i class="dot def"></i>Défenseur</span>
+    <span><i class="dot gk"></i>Gardien</span>
+    <span><i class="dot" style="background:var(--gold); border-radius:3px; width:14px; height:9px;"></i>Entrée de l'année</span>
+  </div>
+
+  <div id="list"></div>
+
+  <footer>
+    Source : Transfermarkt · Wikipédia (« List of most expensive association football transfers ») · montants en millions d'euros, frais et bonus potentiels compris.
+  </footer>
+</div>
+
+<script>
+const POS = { A:'attack', M:'mid', D:'def', G:'gk' };
+
+const DATA = {
+  1996: [
+    ["A. Shearer", 1996, 18, "Blackburn Rovers", "Newcastle United", "A"],
+    ["Ronaldo", 1996, 15, "PSV Eindhoven", "FC Barcelone", "A"],
+    ["E. Chiesa", 1996, 13, "Sampdoria", "Parma", "A"],
+    ["A. Ortega", 1996, 11, "River Plate", "Valence", "M"],
+    ["F. George", 1996, 10, "Ajax", "Real Betis", "M"],
+    ["F. Ravanelli", 1996, 10, "Juventus", "Middlesbrough", "A"],
+    ["V. Candela", 1996, 10, "Guingamp", "AS Roma", "D"],
+    ["C. Seedorf", 1996, 9, "Sampdoria", "Real Madrid", "M"],
+    ["P. Mijatovic", 1996, 9, "Valence", "Real Madrid", "A"],
+    ["Zé Roberto", 1996, 9, "Portuguesa", "Real Madrid", "D"],
+  ],
+  2001: [
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+    ["G. Buffon", 2001, 53, "Parma", "Juventus", "G"],
+    ["G. Mendieta", 2001, 48, "Valence", "Lazio", "M"],
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+    ["P. Nedved", 2001, 45, "Lazio", "Juventus", "M"],
+    ["J. S. Veron", 2001, 43, "Lazio", "Manchester United", "M"],
+    ["Rui Costa", 2001, 41, "Fiorentina", "AC Milan", "M"],
+    ["F. Inzaghi", 2001, 36, "Juventus", "AC Milan", "A"],
+  ],
+  2006: [
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+    ["G. Buffon", 2001, 53, "Parma", "Juventus", "G"],
+    ["G. Mendieta", 2001, 48, "Valence", "Lazio", "M"],
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+    ["R. Ferdinand", 2002, 46, "Leeds United", "Manchester United", "D"],
+    ["P. Nedved", 2001, 45, "Lazio", "Juventus", "M"],
+    ["Ronaldo", 2002, 45, "Inter Milan", "Real Madrid", "A"],
+    ["A. Shevchenko", 2006, 44, "AC Milan", "Chelsea", "A"],
+  ],
+  2011: [
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["Z. Ibrahimovic", 2009, 70, "Inter Milan", "FC Barcelone", "A"],
+    ["Kaka", 2009, 67, "AC Milan", "Real Madrid", "M"],
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["F. Torres", 2010, 59, "Liverpool", "Chelsea", "A"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+    ["G. Buffon", 2001, 53, "Parma", "Juventus", "G"],
+    ["G. Mendieta", 2001, 48, "Valence", "Lazio", "M"],
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+  ],
+  2013: [
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["Neymar", 2013, 88, "Santos", "FC Barcelone", "A"],
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["Z. Ibrahimovic", 2009, 70, "Inter Milan", "FC Barcelone", "A"],
+    ["Kaka", 2009, 67, "AC Milan", "Real Madrid", "M"],
+    ["E. Cavani", 2013, 65, "Naples", "PSG", "A"],
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["F. Torres", 2010, 59, "Liverpool", "Chelsea", "A"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+  ],
+  2016: [
+    ["P. Pogba", 2016, 105, "Juventus", "Manchester United", "M"],
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["G. Higuain", 2016, 90, "Naples", "Juventus", "A"],
+    ["Neymar", 2013, 88, "Santos", "FC Barcelone", "A"],
+    ["L. Suarez", 2014, 82, "Liverpool", "FC Barcelone", "A"],
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["K. De Bruyne", 2015, 76, "Wolfsburg", "Manchester City", "M"],
+    ["A. Di Maria", 2014, 75, "Real Madrid", "Manchester United", "A"],
+    ["J. Rodriguez", 2014, 75, "Monaco", "Real Madrid", "M"],
+  ],
+  2021: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["K. Mbappé", 2018, 180, "Monaco", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["João Félix", 2019, 127, "Benfica", "Atlético Madrid", "A"],
+    ["E. Hazard", 2019, 121, "Chelsea", "Real Madrid", "A"],
+    ["A. Griezmann", 2019, 120, "Atlético Madrid", "FC Barcelone", "A"],
+    ["J. Grealish", 2021, 118, "Aston Villa", "Manchester City", "M"],
+    ["C. Ronaldo", 2018, 117, "Real Madrid", "Juventus", "A"],
+    ["R. Lukaku", 2021, 113, "Inter Milan", "Chelsea", "A"],
+  ],
+  2026: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["K. Mbappé", 2018, 180, "Monaco", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["A. Isak", 2025, 145, "Newcastle United", "Liverpool", "A"],
+    ["E. Fernández", 2026, 145, "Chelsea", "Manchester City", "M"],
+    ["M. Rogers", 2026, 138, "Aston Villa", "Chelsea", "M"],
+    ["E. Anderson", 2026, 135, "Nottingham Forest", "Manchester City", "M"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["J. Bellingham", 2023, 127, "Borussia Dortmund", "Real Madrid", "M"],
+    ["João Félix", 2019, 127, "Benfica", "Atlético Madrid", "A"],
+  ],
+
+  1997: [
+    ["Ronaldo", 1997, 27, "FC Barcelone", "Inter Milan", "A"],
+    ["S. Anderson", 1997, 26, "Monaco", "FC Barcelone", "A"],
+    ["Rivaldo", 1997, 24, "Deportivo", "FC Barcelone", "A"],
+    ["A. Shearer", 1996, 18, "Blackburn Rovers", "Newcastle United", "A"],
+    ["C. Vieri", 1997, 18, "Juventus", "Atlético Madrid", "A"],
+    ["R. Bogdanovic", 1997, 17, "JEF United", "Atlético Madrid", "A"],
+    ["Ronaldo", 1996, 15, "PSV Eindhoven", "FC Barcelone", "A"],
+    ["J. Paulista", 1997, 14, "Middlesbrough", "Atlético Madrid", "M"],
+    ["C. Karembeu", 1997, 13, "Sampdoria", "Real Madrid", "M"],
+    ["E. Chiesa", 1996, 13, "Sampdoria", "Parma", "A"],
+  ],
+  1998: [
+    ["Denilson", 1998, 30, "São Paulo", "Real Betis", "A"],
+    ["C. Vieri", 1998, 28, "Atlético Madrid", "Lazio", "A"],
+    ["Ronaldo", 1997, 27, "FC Barcelone", "Inter Milan", "A"],
+    ["S. Anderson", 1997, 26, "Monaco", "FC Barcelone", "A"],
+    ["Rivaldo", 1997, 24, "Deportivo", "FC Barcelone", "A"],
+    ["N. Ventola", 1998, 21, "Bari", "Inter Milan", "A"],
+    ["D. Yorke", 1998, 19, "Aston Villa", "Manchester United", "A"],
+    ["A. Shearer", 1996, 18, "Blackburn Rovers", "Newcastle United", "A"],
+    ["C. Vieri", 1997, 18, "Juventus", "Atlético Madrid", "A"],
+    ["J. S. Veron", 1998, 18, "Sampdoria", "Parma", "M"],
+  ],
+  1999: [
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+    ["N. Anelka", 1999, 35, "Arsenal", "Real Madrid", "A"],
+    ["Denilson", 1998, 30, "São Paulo", "Real Betis", "A"],
+    ["J. S. Veron", 1999, 30, "Parma", "Lazio", "M"],
+    ["C. Vieri", 1998, 28, "Atlético Madrid", "Lazio", "A"],
+    ["M. Amoroso", 1999, 28, "Udinese", "Parma", "A"],
+    ["Ronaldo", 1997, 27, "FC Barcelone", "Inter Milan", "A"],
+    ["S. Anderson", 1997, 26, "Monaco", "FC Barcelone", "A"],
+    ["V. Montella", 1999, 26, "Sampdoria", "AS Roma", "A"],
+    ["C. Seedorf", 1999, 24, "Real Madrid", "Inter Milan", "M"],
+  ],
+  2000: [
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+    ["G. Batistuta", 2000, 36, "Fiorentina", "AS Roma", "A"],
+    ["N. Anelka", 1999, 35, "Arsenal", "Real Madrid", "A"],
+    ["N. Anelka", 2000, 35, "Real Madrid", "PSG", "A"],
+    ["Denilson", 1998, 30, "São Paulo", "Real Betis", "A"],
+    ["J. S. Veron", 1999, 30, "Parma", "Lazio", "M"],
+    ["M. Overmars", 2000, 29, "Arsenal", "FC Barcelone", "A"],
+    ["C. Vieri", 1998, 28, "Atlético Madrid", "Lazio", "A"],
+  ],
+  2002: [
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+    ["G. Buffon", 2001, 53, "Parma", "Juventus", "G"],
+    ["G. Mendieta", 2001, 48, "Valence", "Lazio", "M"],
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+    ["R. Ferdinand", 2002, 46, "Leeds United", "Manchester United", "D"],
+    ["P. Nedved", 2001, 45, "Lazio", "Juventus", "M"],
+    ["Ronaldo", 2002, 45, "Inter Milan", "Real Madrid", "A"],
+    ["J. S. Veron", 2001, 43, "Lazio", "Manchester United", "M"],
+  ],
+  2009: [
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["Z. Ibrahimovic", 2009, 70, "Inter Milan", "FC Barcelone", "A"],
+    ["Kaka", 2009, 67, "AC Milan", "Real Madrid", "M"],
+    ["Luis Figo", 2000, 60, "FC Barcelone", "Real Madrid", "M"],
+    ["H. Crespo", 2000, 57, "Parma", "Lazio", "A"],
+    ["G. Buffon", 2001, 53, "Parma", "Juventus", "G"],
+    ["G. Mendieta", 2001, 48, "Valence", "Lazio", "M"],
+    ["C. Vieri", 1999, 47, "Lazio", "Inter Milan", "A"],
+    ["R. Ferdinand", 2002, 46, "Leeds United", "Manchester United", "D"],
+  ],
+  2014: [
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["Neymar", 2013, 88, "Santos", "FC Barcelone", "A"],
+    ["L. Suarez", 2014, 82, "Liverpool", "FC Barcelone", "A"],
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["A. Di Maria", 2014, 75, "Real Madrid", "Manchester United", "A"],
+    ["J. Rodriguez", 2014, 75, "Monaco", "Real Madrid", "M"],
+    ["Z. Ibrahimovic", 2009, 70, "Inter Milan", "FC Barcelone", "A"],
+    ["Kaka", 2009, 67, "AC Milan", "Real Madrid", "M"],
+    ["E. Cavani", 2013, 65, "Naples", "PSG", "A"],
+  ],
+  2015: [
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["Neymar", 2013, 88, "Santos", "FC Barcelone", "A"],
+    ["L. Suarez", 2014, 82, "Liverpool", "FC Barcelone", "A"],
+    ["Z. Zidane", 2001, 78, "Juventus", "Real Madrid", "M"],
+    ["K. De Bruyne", 2015, 76, "Wolfsburg", "Manchester City", "M"],
+    ["A. Di Maria", 2014, 75, "Real Madrid", "Manchester United", "A"],
+    ["J. Rodriguez", 2014, 75, "Monaco", "Real Madrid", "M"],
+    ["Z. Ibrahimovic", 2009, 70, "Inter Milan", "FC Barcelone", "A"],
+    ["Kaka", 2009, 67, "AC Milan", "Real Madrid", "M"],
+  ],
+  2017: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["P. Pogba", 2016, 105, "Juventus", "Manchester United", "M"],
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["G. Higuain", 2016, 90, "Naples", "Juventus", "A"],
+    ["Neymar", 2013, 88, "Santos", "FC Barcelone", "A"],
+    ["R. Lukaku", 2017, 85, "Everton", "Manchester United", "A"],
+    ["L. Suarez", 2014, 82, "Liverpool", "FC Barcelone", "A"],
+  ],
+  2018: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["K. Mbappé", 2018, 180, "Monaco", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["C. Ronaldo", 2018, 117, "Real Madrid", "Juventus", "A"],
+    ["P. Pogba", 2016, 105, "Juventus", "Manchester United", "M"],
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+    ["C. Ronaldo", 2009, 94, "Manchester United", "Real Madrid", "A"],
+    ["G. Higuain", 2016, 90, "Naples", "Juventus", "A"],
+    ["Neymar", 2013, 88, "Santos", "FC Barcelone", "A"],
+  ],
+  2019: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["K. Mbappé", 2018, 180, "Monaco", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["João Félix", 2019, 127, "Benfica", "Atlético Madrid", "A"],
+    ["E. Hazard", 2019, 121, "Chelsea", "Real Madrid", "A"],
+    ["A. Griezmann", 2019, 120, "Atlético Madrid", "FC Barcelone", "A"],
+    ["C. Ronaldo", 2018, 117, "Real Madrid", "Juventus", "A"],
+    ["P. Pogba", 2016, 105, "Juventus", "Manchester United", "M"],
+    ["G. Bale", 2013, 101, "Tottenham", "Real Madrid", "A"],
+  ],
+  2023: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["K. Mbappé", 2018, 180, "Monaco", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["J. Bellingham", 2023, 127, "Borussia Dortmund", "Real Madrid", "M"],
+    ["João Félix", 2019, 127, "Benfica", "Atlético Madrid", "A"],
+    ["E. Fernández", 2023, 121, "Benfica", "Chelsea", "M"],
+    ["E. Hazard", 2019, 121, "Chelsea", "Real Madrid", "A"],
+    ["A. Griezmann", 2019, 120, "Atlético Madrid", "FC Barcelone", "A"],
+    ["J. Grealish", 2021, 118, "Aston Villa", "Manchester City", "M"],
+  ],
+  2025: [
+    ["Neymar", 2017, 222, "FC Barcelone", "PSG", "A"],
+    ["K. Mbappé", 2018, 180, "Monaco", "PSG", "A"],
+    ["O. Dembélé", 2017, 148, "Borussia Dortmund", "FC Barcelone", "A"],
+    ["A. Isak", 2025, 145, "Newcastle United", "Liverpool", "A"],
+    ["P. Coutinho", 2017, 135, "Liverpool", "FC Barcelone", "M"],
+    ["J. Bellingham", 2023, 127, "Borussia Dortmund", "Real Madrid", "M"],
+    ["João Félix", 2019, 127, "Benfica", "Atlético Madrid", "A"],
+    ["F. Wirtz", 2025, 125, "Bayer Leverkusen", "Liverpool", "M"],
+    ["E. Fernández", 2023, 121, "Benfica", "Chelsea", "M"],
+    ["E. Hazard", 2019, 121, "Chelsea", "Real Madrid", "A"],
+  ],
+};
+
+// Années où le classement ne change pas : on réutilise le snapshot précédent
+DATA[2003] = DATA[2004] = DATA[2005] = DATA[2002];
+DATA[2007] = DATA[2008] = DATA[2006];
+DATA[2010] = DATA[2012] = DATA[2011];
+DATA[2020] = DATA[2019];
+DATA[2022] = DATA[2021];
+DATA[2024] = DATA[2023];
+
+// Sigle, fond, texte pour chaque club
+const CLUBS = {
+  "Blackburn Rovers":["BLA","#1b5fa8","#fff"],
+  "Newcastle United":["NEW","#141414","#fff"],
+  "PSV Eindhoven":["PSV","#e2001a","#fff"],
+  "FC Barcelone":["FCB","linear-gradient(90deg,#a50044 50%,#004d98 50%)","#fff"],
+  "Sampdoria":["SAM","#0057a8","#fff"],
+  "Parma":["PAR","#f7cf1d","#1a2a6c"],
+  "River Plate":["RIV","#f5f5f5","#d40000"],
+  "Valence":["VCF","#f5f5f5","#e07b00"],
+  "Ajax":["AJA","#d2122e","#fff"],
+  "Real Betis":["BET","#0bb363","#fff"],
+  "Juventus":["JUV","#141414","#fff"],
+  "Middlesbrough":["MID","#e2001a","#fff"],
+  "Guingamp":["EAG","#c8102e","#fff"],
+  "AS Roma":["ROM","#8e1f2f","#f0bc42"],
+  "Real Madrid":["RMA","#f5f5f5","#1d3f8f"],
+  "Portuguesa":["POR","#b3122a","#fff"],
+  "Lazio":["LAZ","#87d8f7","#1b2b4a"],
+  "Inter Milan":["INT","linear-gradient(90deg,#0a2a5e 50%,#141414 50%)","#fff"],
+  "Manchester United":["MUN","#da291c","#ffe500"],
+  "Fiorentina":["FIO","#5b2a86","#fff"],
+  "AC Milan":["MIL","linear-gradient(90deg,#c8102e 50%,#141414 50%)","#fff"],
+  "Leeds United":["LEE","#f5f5f5","#1d428a"],
+  "Chelsea":["CHE","#034694","#fff"],
+  "Liverpool":["LIV","#c8102e","#fff"],
+  "Santos":["SAN","#f5f5f5","#141414"],
+  "Naples":["NAP","#12a0d7","#fff"],
+  "PSG":["PSG","#004170","#fff"],
+  "Tottenham":["TOT","#132257","#fff"],
+  "Wolfsburg":["WOB","#65b32e","#fff"],
+  "Manchester City":["MCI","#6cabdd","#1c2c5b"],
+  "Monaco":["ASM","#e2001a","#fff"],
+  "Borussia Dortmund":["BVB","#fde100","#141414"],
+  "Benfica":["SLB","#e2001a","#fff"],
+  "Atlético Madrid":["ATM","#cb3524","#fff"],
+  "Aston Villa":["AVL","#670e36","#95bfe5"],
+  "Nottingham Forest":["NFO","#dd0000","#fff"],
+  "JEF United":["JEF","#f2d100","#0a6b2f"],
+  "Deportivo":["DEP","#0b4ea2","#fff"],
+  "São Paulo":["SAO","#d2122e","#fff"],
+  "Bari":["BAR","#d2122e","#fff"],
+  "Udinese":["UDI","#141414","#fff"],
+  "Arsenal":["ARS","#ef0107","#fff"],
+  "Everton":["EVE","#003399","#fff"],
+  "Bayer Leverkusen":["B04","#e32219","#141414"]
+};
+
+// Optionnel : pour afficher de vrais logos une fois la page sur ton site,
+// renseigne ici l'URL de l'image de chaque club. Exemple :
+// const LOGOS = { "PSG": "/img/logos/psg.png", "Real Madrid": "/img/logos/real.png" };
+const LOGOS = {};
+
+// Noms courts affichés (pour tenir sur une ligne en mobile)
+const SHORT = {
+  "Blackburn Rovers":"Blackburn","Newcastle United":"Newcastle","PSV Eindhoven":"PSV",
+  "FC Barcelone":"Barça","Real Betis":"Betis","Middlesbrough":"Boro","AS Roma":"Roma",
+  "Real Madrid":"Real","Inter Milan":"Inter","Manchester United":"Man Utd","AC Milan":"Milan",
+  "Leeds United":"Leeds","Manchester City":"Man City","Borussia Dortmund":"Dortmund",
+  "Atlético Madrid":"Atlético","Aston Villa":"Villa","Nottingham Forest":"Forest",
+  "Juventus":"Juve","JEF United":"JEF","Bayer Leverkusen":"Leverkusen"
+};
+
+function clubHTML(name, isTo){
+  const c = CLUBS[name] || [name.slice(0,3).toUpperCase(), "#3a4a40", "#fff"];
+  const label = SHORT[name] || name;
+  const badge = LOGOS[name]
+    ? `<span class="badge logo"><img src="${LOGOS[name]}" alt="" loading="lazy"></span>`
+    : `<span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
+  return `<span class="club${isTo ? ' to' : ''}">${badge}<span>${label}</span></span>`;
+}
+
+const YEARS = Object.keys(DATA).map(Number);
+const GLOBAL_MAX = 222;
+
+const railTrack = document.getElementById('railTrack');
+const railPrev = document.getElementById('railPrev');
+const railNext = document.getElementById('railNext');
+railPrev.addEventListener('click', ()=> railTrack.scrollBy({left:-160, behavior:'smooth'}));
+railNext.addEventListener('click', ()=> railTrack.scrollBy({left:160, behavior:'smooth'}));
+const listEl = document.getElementById('list');
+const ctxYear = document.getElementById('ctxYear');
+
+YEARS.forEach(y=>{
+  const b = document.createElement('button');
+  b.className = 'year-btn';
+  b.textContent = y;
+  b.dataset.year = y;
+  b.addEventListener('click', ()=> render(y));
+  railTrack.appendChild(b);
+});
+
+function render(year){
+  ctxYear.textContent = year;
+  [...railTrack.children].forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.year) === year);
+  });
+  const activeBtn = railTrack.querySelector('.year-btn.active');
+  if(activeBtn){
+    activeBtn.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+  }
+
+  listEl.innerHTML = '';
+  DATA[year].forEach((row, i)=>{
+    const [name, yr, fee, from, to, pos] = row;
+    const posClass = POS[pos];
+    const el = document.createElement('div');
+    el.className = `row n${i+1}`;
+    el.style.animationDelay = (i * 35) + 'ms';
+    el.innerHTML = `
+      <div class="row-top">
+        <div class="rank">${i+1}</div>
+        <div class="row-main">
+          <div class="name-line">
+            <span class="name">${name}</span>
+            <span class="yeartag${yr === year ? ' new' : ''}">${yr}</span>
+          </div>
+          <div class="clubs">${clubHTML(from,false)}<span class="arrow">&#8594;</span>${clubHTML(to,true)}</div>
+        </div>
+        <div class="fee"><b>${fee}</b><span>M&euro;</span></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill ${posClass}" data-w="${(fee/GLOBAL_MAX*100).toFixed(1)}"></div></div>
+    `;
+    listEl.appendChild(el);
+  });
+
+  // trigger bar animation next frame
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      listEl.querySelectorAll('.bar-fill').forEach(bar=>{
+        bar.style.width = bar.dataset.w + '%';
+      });
+    });
+  });
+}
+
+render(1996);
+</script>
+</body>
+</html>
