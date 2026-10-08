@@ -751,7 +751,12 @@ function render(year){
   });
   const activeBtn = railTrack.querySelector('.year-btn.active');
   if(activeBtn){
-    activeBtn.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+    const tr = railTrack.getBoundingClientRect();
+    const br = activeBtn.getBoundingClientRect();
+    railTrack.scrollTo({
+      left: railTrack.scrollLeft + (br.left - tr.left) - (tr.width - br.width) / 2,
+      behavior: 'smooth'
+    });
   }
 
   listEl.innerHTML = '';
